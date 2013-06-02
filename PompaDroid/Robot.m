@@ -42,10 +42,33 @@
         CCAnimation *walkAnimation = [CCAnimation animationWithSpriteFrames:[walkFrames getNSArray] delay:1.0 / 12.0];
         self.walkAction = [CCRepeatForever actionWithAction:[CCAnimate actionWithAnimation:walkAnimation]];
         
+        //hurt animation
+        CCArray *hurtFrames = [CCArray arrayWithCapacity:8];
+        for (i = 0; i < 3; i++) {
+            CCSpriteFrame *frame = [[CCSpriteFrameCache sharedSpriteFrameCache] spriteFrameByName:[NSString stringWithFormat:@"robot_hurt_%02d.png",i]];
+            [hurtFrames addObject:frame];
+        }
+        CCAnimation *hurtAnimation = [CCAnimation animationWithSpriteFrames:[hurtFrames getNSArray] delay:1. / 12.];
+        self.hurtAction = [CCSequence actions:[CCAnimate actionWithAnimation:hurtAnimation],[CCCallFunc actionWithTarget:self selector:@selector(idle)], nil];
+        
+        //knocked out animation
+        CCArray *knockedOutFrames = [CCArray arrayWithCapacity:5];
+        for (i = 0; i < 5; i++) {
+            CCSpriteFrame *frame = [[CCSpriteFrameCache sharedSpriteFrameCache] spriteFrameByName:[NSString stringWithFormat:@"robot_knockout_%02d.png",i]];
+            [knockedOutFrames addObject:frame];
+        }
+        CCAnimation *knockedOutAnimation = [CCAnimation animationWithSpriteFrames:[knockedOutFrames getNSArray] delay:1.0 / 12.0];
+        self.knockedOutAction = [CCSequence actions:[CCAnimate actionWithAnimation:knockedOutAnimation],[CCBlink actionWithDuration:2.0 blinks:10.0], nil];
         
         self.walkSpeed = 80;
         self.centerToBottom = 39.0;
-        self.centerToBottom = 29.0;
+        self.centerToSides = 29.0;
+        
+        //Create bounding boxes
+        self.hitBox = [self createBoundingBoxWithOrigin:ccp(-self.centerToSides, -self.centerToBottom) size:CGSizeMake(self.centerToSides * 2, self.centerToBottom * 2)];
+        self.attackBox = [self createBoundingBoxWithOrigin:ccp(self.centerToSides, -5) size:CGSizeMake(25, 20)];
+        
+        
         self.hitPoints = 100;
         self.damage = 10;
     }

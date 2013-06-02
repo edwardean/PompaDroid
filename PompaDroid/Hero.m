@@ -45,9 +45,32 @@
         CCAnimation *walkAnimation = [CCAnimation animationWithSpriteFrames:[walkFrames getNSArray] delay:1.0/12.0];
         self.walkAction = [CCRepeatForever actionWithAction:[CCAnimate actionWithAnimation:walkAnimation]];
         
+        //hurt animation
+        CCArray *hurtFrames = [CCArray arrayWithCapacity:8];
+        for (i = 0; i < 3; i++) {
+            CCSpriteFrame *frame = [[CCSpriteFrameCache sharedSpriteFrameCache] spriteFrameByName:[NSString stringWithFormat:@"hero_hurt_%02d.png",i]];
+            [hurtFrames addObject:frame];
+        }
+        CCAnimation *hurtAnimation = [CCAnimation animationWithSpriteFrames:[hurtFrames getNSArray] delay:1.0 / 12.0];
+        self.hurtAction = [CCSequence actions:[CCAnimate actionWithAnimation:hurtAnimation],[CCCallFuncN actionWithTarget:self selector:@selector(idle)], nil];
+        
+        //knocked out animation
+        CCArray *knockedOutFrames = [CCArray arrayWithCapacity:5];
+        for (i = 0; i < 5; i++) {
+            CCSpriteFrame *frame = [[CCSpriteFrameCache sharedSpriteFrameCache] spriteFrameByName:[NSString stringWithFormat:@"hero_knockout_%02d.png",i]];
+            [knockedOutFrames addObject:frame];
+        }
+        CCAnimation *knockedOutAnimation = [CCAnimation animationWithSpriteFrames:[knockedOutFrames getNSArray] delay:1.0 / 12.0];
+        self.knockedOutAction = [CCSequence actions:[CCAnimate actionWithAnimation:knockedOutAnimation], [CCBlink actionWithDuration:2.0 blinks:10.0],nil];
         
         self.centerToBottom = 39.0;
         self.centerToSides = 29.0;
+        
+        
+        //Create bounding boxes
+        self.hitBox = [self createBoundingBoxWithOrigin:ccp(-self.centerToSides, -self.centerToSides) size:CGSizeMake(self.centerToSides * 2, self.centerToBottom * 2)];
+        self.attackBox = [self createBoundingBoxWithOrigin:ccp(self.centerToSides, -10) size:CGSizeMake(20, 20)];
+        
         self.hitPoints = 100.0;
         self.damage = 20.0;
         self.walkSpeed = 80;

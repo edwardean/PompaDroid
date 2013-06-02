@@ -80,6 +80,18 @@
 //Trigger the attack method
 - (void)ccTouchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
     [_hero attack];
+    if (_hero.actionState == kActionStateAttack) {
+        Robot *robot;
+        CCARRAY_FOREACH(_robots, robot) {
+            if (robot.actionState != kActionStateKnockedOut) {
+                if (fabsf(_hero.position.y - robot.position.y) < 10) {
+                    if (CGRectIntersectsRect(_hero.attackBox.actual, robot.hitBox.actual)) {
+                        [robot hurtWithDamage:_hero.damage];
+                    }
+                }
+            }
+        }
+    }
 }
 
 - (void)update:(ccTime)delta {

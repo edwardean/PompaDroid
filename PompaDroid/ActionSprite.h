@@ -37,6 +37,11 @@
 @property (nonatomic, assign) float centerToSides;
 @property (nonatomic, assign) float centerToBottom;
 
+
+//Bounding Box
+@property (nonatomic, assign) BoundingBox hitBox;
+@property (nonatomic, assign) BoundingBox attackBox;
+
 //Action methods
 - (void)idle;
 - (void)attack;
@@ -46,4 +51,8 @@
 
 //Scheduled methods
 - (void)update:(ccTime)delta;
+
+
+//A factory method for a bounding box, which simply create a BoundingBox structure given an origin and size.
+- (BoundingBox)createBoundingBoxWithOrigin:(CGPoint)origin size:(CGSize)size;
 @end

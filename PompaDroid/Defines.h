@@ -34,7 +34,7 @@ typedef enum _ActionState {
 
 // 4 - structures
 typedef struct _BoundingBox {
-    CGRect actual;
-    CGRect original;
+    CGRect actual;      //The rectangle local to each individual sprite,and never changes once it is set.
+    CGRect original;    //On the one hand,is the rectangle as it is located in world space.As the sprite moves, so                  does the actual rectangle.
 } BoundingBox;
 #endif
