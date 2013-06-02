@@ -9,7 +9,9 @@
 #import <Foundation/Foundation.h>
 #import "cocos2d.h"
 #import "Hero.h"
-@interface GameLayer : CCLayer {
+#import "SimpleDPad.h"
+#import "HudLayer.h"
+@interface GameLayer : CCLayer <SimpleDPadDelegate> {
     CCTMXTiledMap *_tileMap;
     
     CCSpriteBatchNode *_actors;
@@ -17,4 +19,5 @@
     Hero *_hero;
 }
 
+@property (nonatomic, weak) HudLayer *hud;
 @end

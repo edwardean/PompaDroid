@@ -34,7 +34,16 @@
         }
         
         CCAnimation *attackAnimation = [CCAnimation animationWithSpriteFrames:[attackFrames getNSArray] delay:1.0/24.0];
-        self.attackAction = [CCSequence actions:[CCAnimate actionWithAnimation:attackAnimation], nil];
+        self.attackAction = [CCSequence actions:[CCAnimate actionWithAnimation:attackAnimation],[CCCallFunc actionWithTarget:self selector:@selector(idle)], nil];
+        
+        //walk animation
+        CCArray *walkFrames = [CCArray arrayWithCapacity:8];
+        for (i = 0; i < 8; i++) {
+            CCSpriteFrame *frame = [[CCSpriteFrameCache sharedSpriteFrameCache] spriteFrameByName:[NSString stringWithFormat:@"hero_walk_%02d.png",i]];
+            [walkFrames addObject:frame];
+        }
+        CCAnimation *walkAnimation = [CCAnimation animationWithSpriteFrames:[walkFrames getNSArray] delay:1.0/12.0];
+        self.walkAction = [CCRepeatForever actionWithAction:[CCAnimate actionWithAnimation:walkAnimation]];
         
         
         self.centerToBottom = 39.0;
