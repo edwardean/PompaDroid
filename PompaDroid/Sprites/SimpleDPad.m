@@ -75,31 +75,39 @@
     if (degrees <= 22.5 && degrees >= -22.5) {
         //Right
         _direction = ccp(1.0,0.0);
+        CCLOG(@"Right");
     } else if (degrees > 22.5 && degrees < 67.5) {
         //BottomRight
         _direction = ccp(1.0, -1.0);
+        CCLOG(@"BottomRight");
     } else if (degrees >= 67.5 && degrees <= 112.5) {
         //Bottom
         _direction = ccp(0.0, -1.0);
+        CCLOG(@"Bottom");
     } else if (degrees > 112.5 && degrees < 157.5) {
         //BottomLeft
         _direction = ccp(-1.0, -1.0);
+        CCLOG(@"BottomLeft");
     } else if (degrees >= 157.5 && degrees <= -157.5) {
         //Left
         _direction = ccp(-1.0, 0.0);
+        CCLOG(@"Left");
     } else if (degrees < -22.5 && degrees > -67.5) {
         //TopRight
         _direction = ccp(1.0, 1.0);
+        CCLOG(@"TopRight");
     } else if (degrees <= -67.5 && degrees >= -112.5) {
         //Top
         _direction = ccp(0.0, 1.0);
+        CCLOG(@"Top");
     } else if (degrees < -112.5 && degrees > -157.5) {
         //TopLeft
         _direction = ccp(-1.0, 1.0);
+        CCLOG(@"TopLeft");
     }
     
     [_delegate simpleDPad:self didChangeDirectionTo:_direction];
 }
-#pragma mark - Define the three protocol methods
+
 
 @end

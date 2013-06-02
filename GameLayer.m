@@ -14,6 +14,7 @@
 - (id)init {
     if (self = [super init]) {
         [self initTileMap];
+        [self scheduleUpdate];
         
         [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile:@"pd_sprites.plist"];
         _actors = [CCSpriteBatchNode batchNodeWithFile:@"pd_sprites.pvr.ccz"];
@@ -48,5 +49,45 @@
 //Trigger the attack method
 - (void)ccTouchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
     [_hero attack];
+}
+
+- (void)update:(ccTime)delta {
+    [_hero update:delta];
+    [self updatePositions];
+}
+
+
+//  Every loop,GameLayer asks the hero to update its desired position, and then it takes that desired position and
+//  checks if it is within the bounds of the Tiled Map's floord by using these values:
+//
+//  mapSize:    this is the number of tiles in the Tiled Map. There are 10x100 tiles total,but only 3x100 for the
+//  floor.
+//
+//  tileSize:   this contains the dimensions of the each tile,32x32 pixels in this particular case.
+//
+
+- (void)updatePositions {
+    float posX = MIN(_tileMap.mapSize.width * _tileMap.tileSize.width - _hero.centerToSides, MAX(_hero.centerToSides, _hero.desiredPosition.x));
+    
+    float posY = MIN(3 * _tileMap.tileSize.height + _hero.centerToBottom,MAX(_hero.centerToBottom, _hero.desiredPosition.y));
+    _hero.position = ccp(posX, posY);
+}
+#pragma mark - Define the three protocol methods
+- (void)simpleDPad:(SimpleDPad *)simpleDPad didChangeDirectionTo:(CGPoint)direction {
+    [_hero walkWithDirection:direction];
+}
+
+- (void)simpleDPadTouchEnded:(SimpleDPad *)simpleDPad {
+    if (_hero.actionState == kActionStateWalk) {
+        [_hero idle];
+    }
+}
+
+- (void)simpleDPad:(SimpleDPad *)simpleDPad isHoldingDirection:(CGPoint)direction {
+    [_hero walkWithDirection:direction];
+}
+
+- (void) dealloc {
+    [self unscheduleUpdate];
 }
 @end
