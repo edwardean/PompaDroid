@@ -54,8 +54,26 @@
 - (void)update:(ccTime)delta {
     [_hero update:delta];
     [self updatePositions];
+    [self setViewpointCenter:_hero.position];
 }
 
+
+
+
+//Centers the screen on the hero's position, except in cases where the hero is at the age of the map.
+- (void)setViewpointCenter:(CGPoint)position {
+    CGSize winSize = [[CCDirector sharedDirector] winSize];
+    
+    int x = MAX(position.x, winSize.width/2);
+    int y = MAX(position.y, winSize.height/2);
+    x = MIN(x, (_tileMap.mapSize.width * _tileMap.tileSize.width) - winSize.width / 2);
+    y = MIN(y, (_tileMap.mapSize.height * _tileMap.tileSize.height) - winSize.height / 2);
+    
+    CGPoint actualPosition = ccp(x, y);
+    CGPoint centerOfView = ccp(winSize.width/2, winSize.height/2);
+    CGPoint viewPoint = ccpSub(centerOfView, actualPosition);
+    self.position = viewPoint;
+}
 
 //  Every loop,GameLayer asks the hero to update its desired position, and then it takes that desired position and
 //  checks if it is within the bounds of the Tiled Map's floord by using these values:
