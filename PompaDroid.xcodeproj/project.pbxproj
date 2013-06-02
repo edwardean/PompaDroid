@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		CA46B20A175B52160094D3B3 /* Robot.m in Sources */ = {isa = PBXBuildFile; fileRef = CA46B209175B52160094D3B3 /* Robot.m */; };
 		CA6874B9175A48B300AAE23B /* Hero.m in Sources */ = {isa = PBXBuildFile; fileRef = CA6874B8175A48B300AAE23B /* Hero.m */; };
 		CA6874C0175A491700AAE23B /* latin_industries.aifc in Resources */ = {isa = PBXBuildFile; fileRef = CA6874BB175A491700AAE23B /* latin_industries.aifc */; };
 		CA6874C1175A491700AAE23B /* pd_botdeath.caf in Resources */ = {isa = PBXBuildFile; fileRef = CA6874BC175A491700AAE23B /* pd_botdeath.caf */; };
@@ -159,6 +160,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		CA46B208175B52160094D3B3 /* Robot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Robot.h; sourceTree = "<group>"; };
+		CA46B209175B52160094D3B3 /* Robot.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Robot.m; sourceTree = "<group>"; };
 		CA6874B7175A48B300AAE23B /* Hero.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Hero.h; sourceTree = "<group>"; };
 		CA6874B8175A48B300AAE23B /* Hero.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Hero.m; sourceTree = "<group>"; };
 		CA6874BB175A491700AAE23B /* latin_industries.aifc */ = {isa = PBXFileReference; lastKnownFileType = file; path = latin_industries.aifc; sourceTree = "<group>"; };
@@ -928,6 +931,8 @@
 			children = (
 				CAC7CFD01759FF9F005436BB /* GameLayer.h */,
 				CAC7CFD11759FF9F005436BB /* GameLayer.m */,
+				CA46B208175B52160094D3B3 /* Robot.h */,
+				CA46B209175B52160094D3B3 /* Robot.m */,
 				CA6874B7175A48B300AAE23B /* Hero.h */,
 				CA6874B8175A48B300AAE23B /* Hero.m */,
 				CAC7CFD31759FFAA005436BB /* HudLayer.h */,
@@ -1158,6 +1163,7 @@
 				CAC7CFE6175A300A005436BB /* ActionSprite.m in Sources */,
 				CA6874B9175A48B300AAE23B /* Hero.m in Sources */,
 				CA6874C7175A580100AAE23B /* SimpleDPad.m in Sources */,
+				CA46B20A175B52160094D3B3 /* Robot.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -7,7 +7,7 @@
 //
 
 #import "GameLayer.h"
-
+#import "Robot.h"
 
 @implementation GameLayer
 
@@ -24,6 +24,7 @@
         self.touchEnabled = YES;
         
         [self initHero];
+        [self initRobots];
     }
     return self;
 }
@@ -46,6 +47,36 @@
     [_hero idle];
 }
 
+- (void)initRobots {
+    int robotCount = 50;
+    self.robots = [[CCArray alloc] initWithCapacity:robotCount];
+    
+    for (int i = 0; i < robotCount; i++) {
+        Robot *robot = [Robot node];
+        [_actors addChild:robot];
+        [_robots addObject:robot];
+        
+        int minX = SCREEN.width + robot.centerToSides;
+        int maxX = _tileMap.mapSize.width * _tileMap.tileSize.width - robot.centerToSides;
+        int minY = robot.centerToBottom;
+        int maxY = 3 * _tileMap.tileSize.height + robot.centerToBottom;
+        robot.scaleX = -1;
+        robot.position = ccp(random_range(minX, maxX), random_range(minY, maxY));
+        robot.desiredPosition = robot.position;
+        [robot idle];
+    }
+}
+
+
+//  Every time the sprite position are updated, this method makes the CCSpriteBatchNode reorder the z-Value of each 
+//  of its children, based on how far the child is from the bottom of the map. As the child goes higher, the
+//  resulting z-Value goes down.
+- (void)reorderActors {
+    ActionSprite *sprite;
+    CCARRAY_FOREACH(_actors.children, sprite) {
+        [_actors reorderChild:sprite z:(_tileMap.mapSize.height * _tileMap.tileSize.height) - sprite.position.y];
+    }
+}
 //Trigger the attack method
 - (void)ccTouchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
     [_hero attack];
@@ -54,6 +85,7 @@
 - (void)update:(ccTime)delta {
     [_hero update:delta];
     [self updatePositions];
+    [self reorderActors];
     [self setViewpointCenter:_hero.position];
 }
 
