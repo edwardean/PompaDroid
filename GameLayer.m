@@ -8,11 +8,20 @@
 
 #import "GameLayer.h"
 #import "Robot.h"
-
+#import "GameScene.h"
+#import "SimpleAudioEngine.h"
 @implementation GameLayer
 
 - (id)init {
     if (self = [super init]) {
+        
+        //Load audio
+        [[SimpleAudioEngine sharedEngine] preloadBackgroundMusic:@"latin_industries.aifc"];
+        [[SimpleAudioEngine sharedEngine] playBackgroundMusic:@"latin_industries.aifc"];
+        [[SimpleAudioEngine sharedEngine] preloadEffect:@"pd_hit0.caf"];
+        [[SimpleAudioEngine sharedEngine] preloadEffect:@"pd_hit1.caf"];
+        [[SimpleAudioEngine sharedEngine] preloadEffect:@"pd_herodeath.caf"];
+        [[SimpleAudioEngine sharedEngine] preloadEffect:@"pd_botdeath.caf"];
         [self initTileMap];
         [self scheduleUpdate];
         
@@ -68,6 +77,70 @@
 }
 
 
+- (void)updateRobots:(ccTime)dt {
+    int alive = 0;
+    Robot *robot;
+    float distanceSQ;
+    int randomChoice = 0;
+    CCARRAY_FOREACH(_robots, robot) {
+        [robot update:dt];
+        if (robot.actionState != kActionStateKnockedOut) {
+            //1
+            alive++;
+            
+            //2
+            if (CURTIME > robot.nextDecisionTime) {
+                distanceSQ = ccpDistanceSQ(robot.position, _hero.position);
+                
+                //3
+                if (distanceSQ <= 50 * 50) {
+                    robot.nextDecisionTime = CURTIME + frandom_range(0.1, 0.5);
+                    randomChoice = random_range(0, 1);
+                    
+                    if (randomChoice == 0) {
+                        if (_hero.position.x > robot.position.x) {
+                            robot.scaleX = 1.0;
+                        } else {
+                            robot.scaleX = -1.0;
+                        }
+                        
+                        //4
+                        [robot attack];
+                        if (robot.actionState == kActionStateAttack) {
+                            if (fabs(_hero.position.y - robot.position.y) < 10) {
+                                if (CGRectIntersectsRect(_hero.hitBox.actual, robot.attackBox.actual)) {
+                                    [_hero hurtWithDamage:robot.damage];
+
+                                    if (_hero.actionState == kActionStateKnockedOut && [_hud getChildByTag:5] == nil) {
+                                        [self endGame];
+                                    }
+                                }
+                            }
+                        }
+                    } else {
+                        [robot idle];
+                    }
+                } else if (distanceSQ <= SCREEN.width * SCREEN.width) {
+                    //5
+                    robot.nextDecisionTime = CURTIME + frandom_range(0.5, 1.0);
+                    randomChoice = random_range(0, 2);
+                    if (randomChoice == 0) {
+                        CGPoint moveDirection = ccpNormalize(ccpSub(_hero.position, robot.position));
+                        [robot walkWithDirection:moveDirection];
+                    } else {
+                        [robot idle];
+                    }
+                }
+            }
+        }
+    }
+    if(alive == 0 && [_hud getChildByTag:5] == nil) {
+        [self endGame];
+    }
+}
+
+
+
 //  Every time the sprite position are updated, this method makes the CCSpriteBatchNode reorder the z-Value of each 
 //  of its children, based on how far the child is from the bottom of the map. As the child goes higher, the
 //  resulting z-Value goes down.
@@ -77,7 +150,21 @@
         [_actors reorderChild:sprite z:(_tileMap.mapSize.height * _tileMap.tileSize.height) - sprite.position.y];
     }
 }
+
+
+
 //Trigger the attack method
+//  Explain:
+//
+//  1.  Check if the hero's state is attack. and if the robots is anything state but
+//      knocked out.
+//
+//  2.  Check if the hero's position and the robot's position are only 10 points apart
+//      vertically. This indicates that they are standing on the same plane.
+//
+//  3.  Check if the attack box of the hero intersects with the hit box of the robot
+//      using the CGRectIntersectsRect function.
+//
 - (void)ccTouchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
     [_hero attack];
     if (_hero.actionState == kActionStateAttack) {
@@ -96,6 +183,7 @@
 
 - (void)update:(ccTime)delta {
     [_hero update:delta];
+    [self updateRobots:delta];
     [self updatePositions];
     [self reorderActors];
     [self setViewpointCenter:_hero.position];
@@ -133,6 +221,13 @@
     
     float posY = MIN(3 * _tileMap.tileSize.height + _hero.centerToBottom,MAX(_hero.centerToBottom, _hero.desiredPosition.y));
     _hero.position = ccp(posX, posY);
+    
+    Robot *robot;
+    CCARRAY_FOREACH(_robots, robot) {
+        posX = MIN(_tileMap.mapSize.width * _tileMap.tileSize.width - robot.centerToSides, MAX(robot.centerToSides, robot.desiredPosition.x));
+        posY = MIN(3 * _tileMap.tileSize.height + robot.centerToBottom, MAX(robot.centerToBottom, robot.desiredPosition.y));
+        robot.position = ccp(posX, posY);
+    }
 }
 #pragma mark - Define the three protocol methods
 - (void)simpleDPad:(SimpleDPad *)simpleDPad didChangeDirectionTo:(CGPoint)direction {
@@ -149,6 +244,20 @@
     [_hero walkWithDirection:direction];
 }
 
+
+
+- (void)endGame {
+    CCLabelTTF *restartLabel = [CCLabelTTF labelWithString:@"Restart" fontName:@"Arial" fontSize:30];
+    CCMenuItemLabel *restartItem = [CCMenuItemLabel itemWithLabel:restartLabel target:self selector:@selector(restartGame)];
+    CCMenu *menu = [CCMenu menuWithItems:restartItem, nil];
+    menu.position = CENTER;
+    menu.tag = 5;
+    [_hud addChild:menu z:5];
+}
+
+- (void)restartGame {
+    [[CCDirector sharedDirector] replaceScene:[GameScene node]];
+}
 - (void) dealloc {
     [self unscheduleUpdate];
 }

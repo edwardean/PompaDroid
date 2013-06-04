@@ -7,14 +7,14 @@
 //
 
 #import "Robot.h"
-
+#import "SimpleAudioEngine.h"
 
 @implementation Robot
 
 - (id)init {
     if (self = [super initWithSpriteFrameName:@"robot_idle_00.png"]) {
         int i;
-        
+        _nextDecisionTime = 0;
         //idle animation
         CCArray *idleFrames = [CCArray arrayWithCapacity:5];
         for (i = 0; i < 5; i++) {
@@ -73,5 +73,10 @@
         self.damage = 10;
     }
     return self;
+}
+
+- (void)knockout {
+    [super knockout];
+    [[SimpleAudioEngine sharedEngine] playEffect:@"pd_botdeath.caf"];
 }
 @end

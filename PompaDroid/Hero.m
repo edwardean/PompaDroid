@@ -7,7 +7,7 @@
 //
 
 #import "Hero.h"
-
+#import "SimpleAudioEngine.h"
 
 @implementation Hero
 
@@ -76,5 +76,10 @@
         self.walkSpeed = 80;
     }
     return self;
+}
+
+- (void)knockout {
+    [super knockout];
+    [[SimpleAudioEngine sharedEngine] playEffect:@"pd_herodeath.caf"];
 }
 @end

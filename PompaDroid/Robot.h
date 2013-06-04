@@ -12,5 +12,5 @@
 @interface Robot : ActionSprite {
     
 }
-
+@property (nonatomic, assign) double nextDecisionTime;
 @end
